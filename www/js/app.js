@@ -66,7 +66,7 @@ angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.servic
     views: {
       'mainContent': {
         templateUrl: 'templates/menu.html',
-          controller: 'MenuController'
+        controller: 'MenuController'
       }
     }
   })
@@ -79,9 +79,20 @@ angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.servic
         controller: 'DishDetailController'
       }
     }
+  })
+
+  .state('app.favorites', {
+    url: '/favorites',
+    views: {
+      'mainContent': {
+        templateUrl: 'templates/favorites.html',
+        controller: 'FavoritesController'
+      }
+    }
   });
 
+
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/aboutus');
+  $urlRouterProvider.otherwise('/app/menu');
 
 });
