@@ -93,6 +93,6 @@ angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.servic
 
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/menu');
+  $urlRouterProvider.otherwise('/app/menu/1');
 
 });

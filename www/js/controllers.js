@@ -170,7 +170,7 @@ angular.module('conFusion.controllers', [])
   };
         }])
 
-.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', function ($scope, $stateParams, menuFactory, baseURL) {
+.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicPopover', '$ionicModal',  function ($scope, $stateParams, menuFactory, favoriteFactory, baseURL, $ionicPopover, $ionicModal) {
 
   $scope.baseURL = baseURL;
 
@@ -190,9 +190,74 @@ angular.module('conFusion.controllers', [])
         $scope.message = "Error: " + response.status + " " + response.statusText;
       }
     );
+  
+  // Create the options popover that we will use later
+  $ionicPopover.fromTemplateUrl('templates/dish-detail-popover.html', {
+    scope: $scope
+  }).then(function (popover) {
+    $scope.dishDetailPopOver = popover;
+  });
+  
+  $scope.showPopover = function ($event) {
+    $scope.dishDetailPopOver.show($event);
+  }
 
+  $scope.goToFavorites = function() {
+    favoriteFactory.addToFavorites($scope.dish.id);
+    $scope.dishDetailPopOver.hide();
+  }
+  
+  $scope.mycomment = {
+    rating: 5,
+    comment: "",
+    author: "",
+    date: ""
+  };
+  
+  // Create the reserve modal that we will use later
+  $ionicModal.fromTemplateUrl('templates/dish-comment.html', {
+    scope: $scope
+  }).then(function (modal) {
+    $scope.commentForm = modal;
+  });
 
-        }])
+  $scope.addComment = function(){
+    $scope.dishDetailPopOver.hide();
+    $scope.commentForm.show();
+  }
+  
+  // Triggered in the comment modal to close it
+  $scope.closeComment = function () {
+    $scope.commentForm.hide();
+  };
+    
+  $scope.submitComment = function () {
+
+    $scope.commentForm.hide();
+    $scope.mycomment.date = new Date().toISOString();
+
+    $scope.dish.comments.push($scope.mycomment);
+    menuFactory.getDishes().update({
+      id: $scope.dish.id
+    }, $scope.dish);
+
+    $scope.commentForm.$setPristine();
+
+    $scope.mycomment = {
+      rating: 5,
+      comment: "",
+      author: "",
+      date: ""
+    };
+    
+  }
+  
+  //Cleanup the popover when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.dishDetailPopOver.remove();
+    $scope.commentForm.remove();
+  });
+}])
 
 .controller('DishCommentController', ['$scope', 'menuFactory', function ($scope, menuFactory) {
 
